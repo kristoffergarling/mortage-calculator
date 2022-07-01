@@ -4,6 +4,7 @@ import ErrorSpan from "./ErrorSpan";
 const Container = styled.div`
   display: flex;
   flex-direction: column;
+  margin-bottom: 20px;
 
   label {
     font-size: 15px;
@@ -15,7 +16,7 @@ const Container = styled.div`
     background-color: rgba(255, 255, 255, 0.3);
     height: 35px;
     border: none;
-    border-radius: 10px;
+    border-radius: 5px;
     padding: 0 10px;
     color: var(--secondary);
     font-weight: 700;
@@ -27,7 +28,6 @@ const Container = styled.div`
       box-shadow: 0 0 1px 0 rgba(8, 11, 14, 0.06),
         0 16px 16px -1px rgba(8, 11, 14, 0.1);
     }
-    margin-bottom: 20px;
   }
 
   @media screen and (min-width: 500px) {
@@ -41,18 +41,19 @@ const Container = styled.div`
   }
 `;
 
-const FormRow = ({ label, name, value, max, error, onChange }) => {
+const FormRow = ({ className, label, name, value, error, step, onChange }) => {
   return (
     <Container>
       <label>{label}</label>
       <input
-        name={name}
+        className={className}
         type="number"
-        max={max}
+        name={name}
+        step={step}
         value={value}
         onChange={onChange}
       ></input>
-      {error && <ErrorSpan message={error}></ErrorSpan>}
+      {error && <ErrorSpan>{error}</ErrorSpan>}
     </Container>
   );
 };

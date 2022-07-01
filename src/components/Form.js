@@ -1,5 +1,7 @@
-import { Fragment, useState } from "react";
+import { Fragment } from "react";
 
+import useForm from "../hooks/useForm";
+import validate from "./ValidationRules";
 import { FormRow, MonthlyPayment, ErrorSpan } from "./index";
 import styled from "styled-components";
 
@@ -8,6 +10,11 @@ const FormContainer = styled.form`
   flex-direction: column;
   width: 100%;
   max-width: 900px;
+
+  .error {
+    border-color: #be1a1a;
+    background-color: #f3baba;
+  }
 
   @media screen and (min-width: 500px) {
     .form-rows {
@@ -47,95 +54,57 @@ const SubmitButton = styled.button`
   }
 `;
 
-const initialState = {
-  price: 1000000,
-  downPayment: 100000,
-  loanTerm: 10,
-  apr: 2,
-  submitted: false,
-};
-
-// const formatNumber = (value) => {
-//   return new Intl.NumberFormat("fr-CA", {
-//     style: "currency",
-//     currency: "USD",
-//   }).format(value);
-// };
-
 const Form = () => {
-  const [input, setInput] = useState(initialState);
+  const { values, errors, handleChange, handleSubmit } = useForm(
+    calculate,
+    validate
+  );
 
-  const controlInputs = () => {
-    if (
-      input.price.length > 1 ||
-      input.downPayment.length > 1 ||
-      input.loanTerm.length > 1 ||
-      input.apr.length > 1
-    ) {
-      return false;
-    }
-    return true;
-  };
-
-  const handleChange = (e) => {
-    // const newValue = formatNumber(e.target.value);
-    setInput({ ...input, submitted: false });
-    setInput({ ...input, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setInput({ ...input, submitted: true });
-  };
+  function calculate() {
+    console.log("success");
+  }
 
   return (
     <Fragment>
       <FormContainer onSubmit={handleSubmit}>
         <div className="form-rows">
           <FormRow
+            className={errors.purchasePrice ? "error" : ""}
             label="Purchase Price"
-            name="price"
-            error={input.price.length < 1 ? "Please enter a Price" : ""}
-            value={input.price}
+            name="purchasePrice"
+            value={values.purchasePrice}
             onChange={handleChange}
+            error={errors.purchasePrice}
           />
           <FormRow
+            className={errors.downPayment ? "error" : ""}
             label="Down Payment"
             name="downPayment"
-            error={
-              input.downPayment > input.price
-                ? "Down Payment can't be higher than Purchase Price"
-                : "" || input.downPayment.length < 1
-                ? "Please enter a Down Payment"
-                : ""
-            }
-            value={input.downPayment}
+            value={values.downPayment}
             onChange={handleChange}
+            error={errors.downPayment}
           />
           <FormRow
+            className={errors.loanTerm ? "error" : ""}
             label="Loan Term (Years)"
             name="loanTerm"
-            error={input.loanTerm.length < 1 ? "Please enter a Loan Term" : ""}
-            max={25}
-            value={input.loanTerm}
+            value={values.loanTerm}
             onChange={handleChange}
+            error={errors.loanTerm}
           />
           <FormRow
+            className={errors.apr ? "error" : ""}
             label="APR (%)"
             name="apr"
-            error={
-              input.apr.length < 1
-                ? "Please enter an Annual Percentage Rate (APR) in %"
-                : ""
-            }
-            max={10}
+            step={0.01}
+            value={values.apr}
             onChange={handleChange}
-            value={input.apr}
+            error={errors.apr}
           />
         </div>
         <SubmitButton type="submit">Calculate</SubmitButton>
+        <MonthlyPayment input={values}></MonthlyPayment>
       </FormContainer>
-      <MonthlyPayment input={input.submitted ? input : 0}></MonthlyPayment>
     </Fragment>
   );
 };

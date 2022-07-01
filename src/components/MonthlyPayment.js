@@ -7,6 +7,7 @@ const Container = styled.div`
   margin-bottom: 40px;
   padding: 5px 15px;
   font-size: 15px;
+  text-align: center;
 
   @media screen and (min-width: 500px) {
     font-weight: 700;
@@ -35,7 +36,7 @@ const MonthlyPayment = ({ input }) => {
   const monthsInAYear = 12;
   const monthlyInterestRate = input.apr / 100 / monthsInAYear;
   const totalMonths = input.loanTerm / monthsInAYear;
-  const loanPrincipal = input.price - input.downPayment;
+  const loanPrincipal = input.purchasePrice - input.downPayment;
 
   let monthlyPayment =
     (loanPrincipal *
@@ -44,10 +45,12 @@ const MonthlyPayment = ({ input }) => {
     (Math.pow(monthlyInterestRate + 1), totalMonths - 1);
 
   monthlyPayment = Math.abs(Math.round(monthlyPayment));
+  console.log(input);
 
   return (
     <Container>
-      <h3>Estimated Monthly Payment: {formatNumber(monthlyPayment)}</h3>
+      <h3>Estimated Monthly Payment:</h3>
+      {input.apr && <h2>{formatNumber(monthlyPayment)}</h2>}
     </Container>
   );
 };
